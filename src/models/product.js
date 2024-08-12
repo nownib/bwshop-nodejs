@@ -13,8 +13,18 @@ module.exports = (sequelize, DataTypes) => {
         /* options */
         foreignKey: "categoryId",
       });
-      Product.belongsToMany(models.Order, {
-        through: "Order_Items",
+      Product.belongsToMany(models.Cart, {
+        through: "Cart_Items",
+        foreignKey: "productId",
+        otherKey: "cartId",
+      });
+      Product.belongsToMany(models.User, {
+        through: "Wishlists",
+        foreignKey: "productId",
+      });
+
+      Product.belongsToMany(models.User, {
+        through: "Rating",
         foreignKey: "productId",
       });
     }
@@ -22,9 +32,12 @@ module.exports = (sequelize, DataTypes) => {
   Product.init(
     {
       name: DataTypes.STRING,
-      description: DataTypes.STRING,
+      description: DataTypes.TEXT("long"),
       price: DataTypes.DECIMAL(10, 2),
+      imageUrl: DataTypes.STRING,
       categoryId: DataTypes.INTEGER,
+      stock: DataTypes.INTEGER,
+      status: DataTypes.STRING,
     },
     {
       sequelize,

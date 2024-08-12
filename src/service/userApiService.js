@@ -96,12 +96,13 @@ const loginUser = async (loginData) => {
         ],
       },
     });
-    if (user) {
+    if (user && user.password !== null) {
       let isCheckPassword = checkPassword(loginData.password, user.password);
       if (isCheckPassword === true) {
         let payload = {
           email: user.email,
           username: user.username,
+          id: user.id,
         };
         let token = createJWT(payload);
         return {
@@ -111,6 +112,7 @@ const loginUser = async (loginData) => {
             token: token,
             email: user.email,
             username: user.username,
+            id: user.id,
           },
         };
       }

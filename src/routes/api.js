@@ -1,15 +1,17 @@
 import express from "express";
 import userController from "../controller/userController";
+import productController from "../controller/productController";
+import cartController from "../controller/cartController";
 import passport from "passport";
 import { checkUserJWT } from "../middleware/JWTAction";
 
 const router = express.Router();
 
 const initApiRoutes = (app) => {
-  router.all("*", checkUserJWT);
+  //user
   router.post("/register", userController.handleRegisterUser);
   router.post("/login", userController.handleLogin);
-  router.get("/account", userController.getUserAccount);
+  router.get("/account", checkUserJWT, userController.getUserAccount);
   router.get("/logout", userController.handleLogout);
 
   // Social authentication
@@ -21,7 +23,7 @@ const initApiRoutes = (app) => {
   router.get(
     "/google/redirect",
     passport.authenticate("google", {
-      failureRedirect: "http://localhost:3000/login",
+      failureRedirect: `${process.env.URL_REACT}/login`,
     }),
     (req, res) => {
       const user = req.user;
@@ -30,11 +32,22 @@ const initApiRoutes = (app) => {
         maxAge: 5 * 60 * 60 * 1000,
       });
       res.redirect(
-        `http://localhost:3000/google/redirect?token=${user.token}&email=${user.email}&username=${user.username}`
+        `${process.env.URL_REACT}/google/redirect?token=${user.token}&email=${user.email}&username=${user.username}`
       );
     }
   );
-
+  //product
+  router.get("/product/trend", productController.readProductTrending);
+  router.get("/category/read", productController.readCategory);
+  router.get("/product/read", productController.readProduct);
+  //cart
+  router.post(
+    "/cart/add-product-to-cart",
+    checkUserJWT,
+    cartController.handleAddProduct
+  );
+  router.post("/cart/delete", checkUserJWT, cartController.handleDeleteProduct);
+  router.get("/cart/read", checkUserJWT, cartController.readCart);
   return app.use("/api/", router);
 };
 

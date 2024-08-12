@@ -55,6 +55,7 @@ const getUserAccount = (req, res) => {
 const handleLogout = async (req, res) => {
   try {
     await res.clearCookie("jwt");
+    await res.clearCookie("connect.sid");
     return res.status(200).json({
       EM: "Clear cookie done", //message
       EC: 0, //code
@@ -70,29 +71,6 @@ const handleLogout = async (req, res) => {
   }
 };
 
-// const upsertUserSocialMedia = async (req, res) => {
-//   try {
-//     let data = await userApiService.upsertUserSocialMedia(req.body);
-//     if (data && data.token) {
-//       //set cookie
-//       res.cookie("jwt", data.token, {
-//         httpOnly: true,
-//         maxAge: 60 * 60 * 5000,
-//       });
-//     }
-//     return {
-//       token: data.token,
-//       email: data.email,
-//       username: data.username,
-//     };
-//   } catch (error) {
-//     return {
-//       token: "",
-//       email: "",
-//       username: "",
-//     };
-//   }
-// };
 module.exports = {
   handleRegisterUser,
   handleLogin,

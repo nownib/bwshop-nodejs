@@ -7,6 +7,7 @@ const nonSecurePaths = [
   "/logout",
   "/auth/google",
   "/google/redirect",
+  "/product/read",
 ];
 
 const createJWT = (payload) => {
@@ -18,7 +19,7 @@ const createJWT = (payload) => {
     });
     return token;
   } catch (error) {
-    console.log(error);
+    console.log("Error jwt", error);
   }
 };
 
@@ -28,7 +29,7 @@ const verifyToken = (token) => {
   try {
     decoded = jwt.verify(token, key);
   } catch (error) {
-    console.log(error);
+    // console.log("Lỗi verify", error);
   }
   return decoded;
 };

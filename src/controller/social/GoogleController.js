@@ -1,7 +1,6 @@
 require("dotenv").config();
 import passport from "passport";
 import userApiService from "../../service/userApiService";
-import userController from "../../controller/userController";
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 
 const loginWithGoogle = () => {

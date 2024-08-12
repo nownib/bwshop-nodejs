@@ -9,7 +9,16 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      User.hasOne(models.Cart, { foreignKey: "userId" });
       User.hasMany(models.Order, { foreignKey: "userId" });
+      User.belongsToMany(models.Product, {
+        through: "Wishlist",
+        foreignKey: "userId",
+      });
+      User.belongsToMany(models.Product, {
+        through: "Rating",
+        foreignKey: "userId",
+      });
     }
   }
   User.init(
@@ -21,6 +30,10 @@ module.exports = (sequelize, DataTypes) => {
       type: {
         type: DataTypes.STRING,
         defaultValue: "LOCAL",
+      },
+      role: {
+        type: DataTypes.STRING,
+        defaultValue: "CUSTOMER",
       },
     },
     {
