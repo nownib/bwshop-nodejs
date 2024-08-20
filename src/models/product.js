@@ -31,6 +31,7 @@ module.exports = (sequelize, DataTypes) => {
   }
   Product.init(
     {
+      sku: DataTypes.STRING,
       name: DataTypes.STRING,
       description: DataTypes.TEXT("long"),
       price: DataTypes.DECIMAL(10, 2),

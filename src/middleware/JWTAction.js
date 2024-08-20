@@ -49,7 +49,7 @@ const checkUserJWT = (req, res, next) => {
   //check login
   if (nonSecurePaths.includes(req.path)) return next();
 
-  let cookies = req.cookies; //khi guoi dung dang nhap thi req dc gui xuong day, can giai ma decoded, check permission va gui den controller
+  let cookies = req.cookies; //khi nguoi dung dang nhap or reload vào checkUserJWT thi req dc gui xuong day, can giai ma decoded, check permission va gui den controller
   const tokenFromHeader = extractToken(req);
 
   if ((cookies && cookies.jwt) || tokenFromHeader) {

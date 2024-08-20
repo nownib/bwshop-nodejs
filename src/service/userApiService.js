@@ -112,7 +112,6 @@ const loginUser = async (loginData) => {
             token: token,
             email: user.email,
             username: user.username,
-            id: user.id,
           },
         };
       }
@@ -146,6 +145,7 @@ const upsertUserSocialMedia = async (typeAccount, dataRaw) => {
       let payload = {
         email: user.email,
         username: user.username,
+        id: user.id,
       };
       let token = createJWT(payload);
 

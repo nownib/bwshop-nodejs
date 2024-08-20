@@ -29,10 +29,10 @@ const initApiRoutes = (app) => {
       const user = req.user;
       res.cookie("jwt", user.token, {
         httpOnly: true,
-        maxAge: 5 * 60 * 60 * 1000,
+        maxAge: 1 * 60 * 60 * 1000,
       });
       res.redirect(
-        `${process.env.URL_REACT}/google/redirect?token=${user.token}&email=${user.email}&username=${user.username}`
+        `${process.env.URL_REACT}/google/redirect?token=${user.token}&email=${user.email}&username=${user.username}&id=${user.id}`
       );
     }
   );
@@ -41,13 +41,22 @@ const initApiRoutes = (app) => {
   router.get("/category/read", productController.readCategory);
   router.get("/product/read", productController.readProduct);
   //cart
+  router.get("/cart/read", checkUserJWT, cartController.readCart);
   router.post(
     "/cart/add-product-to-cart",
     checkUserJWT,
     cartController.handleAddProduct
   );
+  router.post(
+    "/cart/update-cart",
+    checkUserJWT,
+    cartController.handleUpdateProduct
+  );
   router.post("/cart/delete", checkUserJWT, cartController.handleDeleteProduct);
-  router.get("/cart/read", checkUserJWT, cartController.readCart);
+
+  router.post("/cart/clear", checkUserJWT, cartController.handleClearCart);
+  //order
+  router.post("/order/create", checkUserJWT, cartController.handleCreateOrder);
   return app.use("/api/", router);
 };
 

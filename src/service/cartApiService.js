@@ -7,17 +7,28 @@ const addProductToCart = async (userId, productId, quantity) => {
     if (!cart) {
       cart = await db.Cart.create({ userId: userId });
     }
-    cart = cart.get({ plain: true });
 
     let cartItem = await db.Cart_Items.findOne({
       where: { cartId: cart.id, productId },
+      raw: false,
+    });
+    let product = await db.Product.findOne({
+      where: { id: productId },
+      raw: false,
     });
     if (cartItem) {
-      cartItem.quantity += quantity;
-      await cartItem.save();
-      // await cartItem.update({
-      //   quantity: quantity,
-      // });
+      cartItem.quantity = cartItem.quantity + quantity;
+      if (cartItem.quantity <= product.stock) {
+        await cartItem.update({
+          quantity: cartItem.quantity,
+        });
+      } else {
+        return {
+          EM: "Exceeded inventory quantity!",
+          EC: 1,
+          DT: [],
+        };
+      }
     } else {
       await db.Cart_Items.create({
         cartId: cart.id,
@@ -48,7 +59,7 @@ const fetchItemsInCart = async (userId) => {
     }
     cart = cart.get({ plain: true });
     let data = await db.Product.findAll({
-      attributes: ["id", "name", "price", "imageUrl"],
+      attributes: ["id", "sku", "name", "price", "imageUrl", "stock"],
       include: {
         model: db.Cart,
         attributes: ["orderId"],
@@ -74,7 +85,7 @@ const fetchItemsInCart = async (userId) => {
 
 const deleteProductInCart = async (productId, userId) => {
   try {
-    const cart = await db.Cart.findOne({
+    let cart = await db.Cart.findOne({
       where: { userId: userId },
     });
 
@@ -95,4 +106,94 @@ const deleteProductInCart = async (productId, userId) => {
     };
   }
 };
-module.exports = { addProductToCart, fetchItemsInCart, deleteProductInCart };
+
+const updateProductInCart = async (userId, productId, quantity) => {
+  try {
+    let cart = await db.Cart.findOne({ where: { userId: userId } });
+    cart = cart.get({ plain: true });
+
+    let cartItem = await db.Cart_Items.findOne({
+      where: { cartId: cart.id, productId: productId },
+      raw: false,
+    });
+    if (cartItem) {
+      await cartItem.update({
+        quantity: quantity,
+      });
+    } else {
+      return {
+        EM: "Product not found",
+        EC: 1,
+        DT: "",
+      };
+    }
+    return {
+      EM: "Product successfully updated in cart!",
+      EC: 0,
+      DT: [],
+    };
+  } catch (error) {
+    console.log(error);
+    return {
+      EM: "Some thing wrongs with services",
+      EC: 1,
+      DT: [],
+    };
+  }
+};
+
+const clearCart = async (userId) => {
+  try {
+    let cart = await db.Cart.findOne({
+      where: { userId: userId },
+    });
+
+    await db.Cart_Items.destroy({
+      where: { cartId: cart.id },
+    });
+    return {
+      EM: "Clear cart successfully!",
+      EC: 0,
+      DT: [],
+    };
+  } catch (e) {
+    console.log(e);
+    return {
+      EM: "Error from service",
+      EC: 1,
+      DT: [],
+    };
+  }
+};
+
+const createOrder = async (dataOrder, userId) => {
+  try {
+    await db.Order.create({
+      userId: userId,
+      totalPrice: dataOrder.totalPrice,
+      address: dataOrder.address,
+      paymentMethod: dataOrder.paymentMethod,
+      paymentStatus: dataOrder.paymentStatus,
+    });
+    return {
+      EM: "Your order created successfully!",
+      EC: 0,
+      DT: [],
+    };
+  } catch (error) {
+    console.log(error);
+    return {
+      EM: "Some thing wrongs with services",
+      EC: 1,
+      DT: [],
+    };
+  }
+};
+module.exports = {
+  addProductToCart,
+  fetchItemsInCart,
+  deleteProductInCart,
+  updateProductInCart,
+  clearCart,
+  createOrder,
+};

@@ -49,7 +49,7 @@ const sequelize = new Sequelize("wbshop", "root", null, {
 const connectDB = async () => {
   try {
     await sequelize.authenticate();
-    console.log("Connection has been established successfully.");
+    console.log("Connect to the database has been established successfully.");
   } catch (error) {
     console.error("Unable to connect to the database:", error);
   }

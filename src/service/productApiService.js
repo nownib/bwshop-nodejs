@@ -5,7 +5,6 @@ const getAllProductsTrending = async () => {
   try {
     let data = await db.Product.findAll({
       where: { status: "Trending" },
-      attributes: ["name", "price", "imageUrl", "status"],
       include: { model: db.Category, attributes: ["name"] },
       raw: true,
       nest: true,

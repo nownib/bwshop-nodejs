@@ -17,6 +17,12 @@ module.exports = {
       address: {
         type: Sequelize.STRING,
       },
+      paymentMethod: {
+        type: Sequelize.STRING,
+      },
+      paymentStatus: {
+        type: Sequelize.STRING,
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,
