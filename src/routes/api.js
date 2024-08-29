@@ -2,6 +2,8 @@ import express from "express";
 import userController from "../controller/userController";
 import productController from "../controller/productController";
 import cartController from "../controller/cartController";
+import blogController from "../controller/blogController";
+import wishlistController from "../controller/wishlistController";
 import passport from "passport";
 import { checkUserJWT } from "../middleware/JWTAction";
 
@@ -57,6 +59,22 @@ const initApiRoutes = (app) => {
   router.post("/cart/clear", checkUserJWT, cartController.handleClearCart);
   //order
   router.post("/order/create", checkUserJWT, cartController.handleCreateOrder);
+  //wishlist
+  router.get("/wishlist/read", checkUserJWT, wishlistController.readWishlist);
+  router.post(
+    "/wishlist/add-to-wishlist",
+    checkUserJWT,
+    wishlistController.handleAddProduct
+  );
+  router.post(
+    "/wishlist/delete",
+    checkUserJWT,
+    wishlistController.handleDeleteProduct
+  );
+
+  //blog
+  router.get("/blog/read", blogController.readBlog);
+
   return app.use("/api/", router);
 };
 

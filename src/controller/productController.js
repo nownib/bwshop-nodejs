@@ -43,7 +43,7 @@ const readProduct = async (req, res) => {
       DT: data.DT,
     });
   } catch (error) {
-    console.log(e);
+    console.log(error);
     return res.status(500).json({
       EM: "Error from server",
       EC: "-1",

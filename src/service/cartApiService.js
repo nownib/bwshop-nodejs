@@ -1,4 +1,3 @@
-import { where } from "sequelize/dist/index.js";
 import db from "../models/index";
 
 const addProductToCart = async (userId, productId, quantity) => {
