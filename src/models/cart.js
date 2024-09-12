@@ -28,7 +28,7 @@ module.exports = (sequelize, DataTypes) => {
   }
   Cart.init(
     {
-      userId: DataTypes.INTEGER,
+      userId: DataTypes.UUID,
       orderId: DataTypes.INTEGER,
     },
     {

@@ -48,6 +48,8 @@ const getUserAccount = (req, res) => {
       token: req.token,
       username: req.user.username,
       email: req.user.email,
+      phone: req.user.phone,
+      avatar: req.user.avatar,
     },
   }); //reload
 };
@@ -55,9 +57,8 @@ const getUserAccount = (req, res) => {
 const handleLogout = async (req, res) => {
   try {
     await res.clearCookie("jwt");
-    await res.clearCookie("connect.sid");
     return res.status(200).json({
-      EM: "Clear cookie done", //message
+      EM: "Clear cookie done",
       EC: 0, //code
       DT: "", //data
     });
@@ -71,9 +72,36 @@ const handleLogout = async (req, res) => {
   }
 };
 
+const updateAccount = async (req, res) => {
+  try {
+    let userId = req.user.id;
+    let data = await userApiService.updateUserAccount(req.body, userId);
+
+    if (data && data.DT && data.DT.token) {
+      //set cookie
+      res.cookie("jwt", data.DT.token, {
+        httpOnly: true,
+        maxAge: 24 * 60 * 60 * 1000,
+      });
+    }
+    return res.status(200).json({
+      EM: data.EM,
+      EC: data.EC,
+      DT: "",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      EM: "Error from server",
+      EC: -1,
+      DT: "",
+    });
+  }
+};
+
 module.exports = {
   handleRegisterUser,
   handleLogin,
   getUserAccount,
   handleLogout,
+  updateAccount,
 };

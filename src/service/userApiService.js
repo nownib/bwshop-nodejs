@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 import { Op } from "sequelize";
 import { createJWT } from "../middleware/JWTAction";
 import { where } from "sequelize/lib/sequelize";
+const { v4: uuidv4 } = require("uuid");
 
 const salt = bcrypt.genSaltSync(10);
 
@@ -66,6 +67,7 @@ const registerUser = async (userData) => {
     let hashPassword = await hashUserPassword(userData.password);
 
     await db.User.create({
+      id: uuidv4(),
       username: userData.username,
       phone: userData.phone,
       email: userData.email,
@@ -102,6 +104,8 @@ const loginUser = async (loginData) => {
         let payload = {
           email: user.email,
           username: user.username,
+          phone: user.phone,
+          avatar: user.avatar,
           id: user.id,
         };
         let token = createJWT(payload);
@@ -112,6 +116,8 @@ const loginUser = async (loginData) => {
             token: token,
             email: user.email,
             username: user.username,
+            phone: user.phone,
+            avatar: user.avatar,
           },
         };
       }
@@ -164,6 +170,55 @@ const upsertUserSocialMedia = async (typeAccount, dataRaw) => {
     console.log(error);
   }
 };
+
+const updateUserAccount = async (data, userId) => {
+  try {
+    let user = await db.User.findOne({
+      where: { id: userId },
+      raw: false,
+      nest: false,
+    });
+    if (user) {
+      await user.update({
+        username: data.userData.username,
+        phone: data.userData.phone,
+        avatar: data.userData.avatar,
+      });
+      let payload = {
+        email: user.email,
+        username: user.username,
+        phone: user.phone,
+        avatar: user.avatar,
+        id: user.id,
+      };
+      let token = createJWT(payload);
+      return {
+        EM: "Update information successfully",
+        EC: 0,
+        DT: {
+          token: token,
+          email: user.email,
+          username: user.username,
+          phone: user.phone,
+        },
+      };
+    } else {
+      return {
+        EM: "User not found",
+        EC: 2,
+        DT: "",
+      };
+    }
+  } catch (error) {
+    console.log(error);
+    return {
+      EM: "Some thing wrongs with services",
+      EC: 1,
+      DT: "",
+    };
+  }
+};
+
 module.exports = {
   registerUser,
   checkPhoneExist,
@@ -173,4 +228,5 @@ module.exports = {
   loginUser,
   checkPassword,
   upsertUserSocialMedia,
+  updateUserAccount,
 };

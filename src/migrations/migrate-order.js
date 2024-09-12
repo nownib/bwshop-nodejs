@@ -9,7 +9,7 @@ module.exports = {
         type: Sequelize.INTEGER,
       },
       userId: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.UUID,
       },
       totalPrice: {
         type: Sequelize.DECIMAL(10, 2),

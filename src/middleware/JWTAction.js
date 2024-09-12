@@ -29,13 +29,12 @@ const verifyToken = (token) => {
   try {
     decoded = jwt.verify(token, key);
   } catch (error) {
-    // console.log("Lỗi verify", error);
+    console.log(error);
   }
   return decoded;
 };
 
 const extractToken = (req) => {
-  //check token header
   if (
     req.headers.authorization &&
     req.headers.authorization.split(" ")[0] === "Bearer"
@@ -44,22 +43,19 @@ const extractToken = (req) => {
   }
   return null;
 };
-const checkUserJWT = (req, res, next) => {
-  //Kiểm tra cookie xem có còn hợp lệ không
-  //check login
-  if (nonSecurePaths.includes(req.path)) return next();
 
-  let cookies = req.cookies; //khi nguoi dung dang nhap or reload vào checkUserJWT thi req dc gui xuong day, can giai ma decoded, check permission va gui den controller
+const checkUserJWT = (req, res, next) => {
+  if (nonSecurePaths.includes(req.path)) return next();
+  let cookies = req.cookies;
   const tokenFromHeader = extractToken(req);
 
   if ((cookies && cookies.jwt) || tokenFromHeader) {
     let token = cookies && cookies.jwt ? cookies.jwt : tokenFromHeader;
 
-    let decoded = verifyToken(token); //data và token của controller, được giải mã và sử dụng
+    let decoded = verifyToken(token);
     if (decoded) {
-      //ko co cookie -> ko co du lieu truyen xuong server -> logout
-      req.user = decoded; // *** cos theer dinh kem them data gui den server controller
-      req.token = token; //khi đăng nhập nó sẽ gửi 2 cái này đến controller, từ đó controller sử dụng token và user để check những lần refresh sau
+      req.user = decoded;
+      req.token = token;
       next();
     } else {
       return res.status(401).json({

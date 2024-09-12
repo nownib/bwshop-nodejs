@@ -4,6 +4,7 @@ import productController from "../controller/productController";
 import cartController from "../controller/cartController";
 import blogController from "../controller/blogController";
 import wishlistController from "../controller/wishlistController";
+import contactController from "../controller/contactController";
 import passport from "passport";
 import { checkUserJWT } from "../middleware/JWTAction";
 
@@ -15,6 +16,7 @@ const initApiRoutes = (app) => {
   router.post("/login", userController.handleLogin);
   router.get("/account", checkUserJWT, userController.getUserAccount);
   router.get("/logout", userController.handleLogout);
+  router.put("/account/update", checkUserJWT, userController.updateAccount);
 
   // Social authentication
   router.get(
@@ -74,6 +76,8 @@ const initApiRoutes = (app) => {
 
   //blog
   router.get("/blog/read", blogController.readBlog);
+  //contact
+  router.post("/contact/add", contactController.handleAddContact);
 
   return app.use("/api/", router);
 };
