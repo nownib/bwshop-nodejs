@@ -126,6 +126,41 @@ const handleCreateOrder = async (req, res) => {
     });
   }
 };
+const readOrder = async (req, res) => {
+  try {
+    let userId = req.user.id;
+    let data = await cartApiService.fetchOrderById(userId);
+    return res.status(200).json({
+      EM: data.EM,
+      EC: data.EC,
+      DT: data.DT,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      EM: "Error from server",
+      EC: -1,
+      DT: "",
+    });
+  }
+};
+
+const readOrderDetails = async (req, res) => {
+  try {
+    let orderId = req.body.orderId;
+    let data = await cartApiService.fetchOrderDetails(orderId);
+    return res.status(200).json({
+      EM: data.EM,
+      EC: data.EC,
+      DT: data.DT,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      EM: "Error from server",
+      EC: -1,
+      DT: "",
+    });
+  }
+};
 
 module.exports = {
   handleAddProduct,
@@ -134,4 +169,6 @@ module.exports = {
   handleUpdateProduct,
   handleClearCart,
   handleCreateOrder,
+  readOrder,
+  readOrderDetails,
 };

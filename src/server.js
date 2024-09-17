@@ -10,6 +10,7 @@ import initWebRoutes from "./routes/web";
 import initApiRoutes from "./routes/api";
 import viewEngine from "./config/viewEngine";
 import configCors from "./config/cors";
+import { v2 as cloudinary } from "cloudinary";
 
 let app = express();
 connectDB();
@@ -41,6 +42,10 @@ initApiRoutes(app);
 
 app.use((req, res) => {
   return res.send("404 not found");
+});
+
+cloudinary.config({
+  secure: true,
 });
 
 loginWithGoogle();

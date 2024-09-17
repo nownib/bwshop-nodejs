@@ -1,3 +1,4 @@
+import { where } from "sequelize/dist/index.js";
 import db from "../models/index";
 
 const addProductToCart = async (userId, productId, quantity) => {
@@ -167,13 +168,22 @@ const clearCart = async (userId) => {
 
 const createOrder = async (dataOrder, userId) => {
   try {
-    await db.Order.create({
+    const order = await db.Order.create({
       userId: userId,
       totalPrice: dataOrder.totalPrice,
       address: dataOrder.address,
       paymentMethod: dataOrder.paymentMethod,
       paymentStatus: dataOrder.paymentStatus,
     });
+    if (order) {
+      const items = dataOrder.products;
+      const orderItems = items.map((item) => ({
+        orderId: order.id,
+        productId: item.id,
+        quantity: item.quantity,
+      }));
+      await db.Order_Items.bulkCreate(orderItems);
+    }
     return {
       EM: "Your order created successfully!",
       EC: 0,
@@ -188,6 +198,63 @@ const createOrder = async (dataOrder, userId) => {
     };
   }
 };
+
+const fetchOrderById = async (userId) => {
+  try {
+    let data = await db.Order.findAll({
+      where: { userId: userId },
+      attributes: ["id", "createdAt", "totalPrice", "address", "paymentMethod"],
+    });
+    return {
+      EM: "Get items successfully",
+      EC: 0,
+      DT: data,
+    };
+  } catch (error) {
+    console.log(error);
+    return {
+      EM: "Some thing wrongs with services",
+      EC: 1,
+      DT: [],
+    };
+  }
+};
+const fetchOrderDetails = async (orderId) => {
+  try {
+    const order = await db.Order.findOne({
+      where: { id: orderId },
+      attributes: ["id", "totalPrice", "address", "paymentMethod"],
+      include: [
+        {
+          model: db.Order_Items,
+          as: "orderItems",
+          include: [
+            {
+              model: db.Product,
+              as: "product",
+              attributes: ["id", "sku", "name", "price", "imageUrl", "stock"],
+            },
+          ],
+          attributes: ["quantity"],
+        },
+      ],
+    });
+
+    return {
+      EM: "Get order details successfully",
+      EC: 0,
+      DT: order,
+    };
+  } catch (error) {
+    console.log(error);
+    return {
+      EM: "Some thing wrongs with services",
+      EC: 1,
+      DT: [],
+    };
+  }
+};
+
 module.exports = {
   addProductToCart,
   fetchItemsInCart,
@@ -195,4 +262,6 @@ module.exports = {
   updateProductInCart,
   clearCart,
   createOrder,
+  fetchOrderById,
+  fetchOrderDetails,
 };

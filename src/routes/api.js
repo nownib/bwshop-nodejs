@@ -5,11 +5,13 @@ import cartController from "../controller/cartController";
 import blogController from "../controller/blogController";
 import wishlistController from "../controller/wishlistController";
 import contactController from "../controller/contactController";
+import addressController from "../controller/addressController";
 import passport from "passport";
 import { checkUserJWT } from "../middleware/JWTAction";
+import multer from "multer";
 
 const router = express.Router();
-
+const upload = multer({ dest: "uploads/" });
 const initApiRoutes = (app) => {
   //user
   router.post("/register", userController.handleRegisterUser);
@@ -17,7 +19,12 @@ const initApiRoutes = (app) => {
   router.get("/account", checkUserJWT, userController.getUserAccount);
   router.get("/logout", userController.handleLogout);
   router.put("/account/update", checkUserJWT, userController.updateAccount);
-
+  router.post(
+    "/account/upload-image",
+    checkUserJWT,
+    upload.single("file"),
+    userController.uploadImage
+  );
   // Social authentication
   router.get(
     "/auth/google",
@@ -57,10 +64,23 @@ const initApiRoutes = (app) => {
     cartController.handleUpdateProduct
   );
   router.post("/cart/delete", checkUserJWT, cartController.handleDeleteProduct);
-
   router.post("/cart/clear", checkUserJWT, cartController.handleClearCart);
+
+  //address
+  router.get("/address/province", addressController.readProvinces);
+  router.post("/address/district", addressController.readDistricts);
+  router.post("/address/wards", addressController.readWards);
+  router.post("/address/create", checkUserJWT, addressController.createAddress);
+
+  router.post(
+    "/address/read-address",
+    checkUserJWT,
+    addressController.readAddress
+  );
   //order
   router.post("/order/create", checkUserJWT, cartController.handleCreateOrder);
+  router.get("/order/read", checkUserJWT, cartController.readOrder);
+  router.post("/order/details", checkUserJWT, cartController.readOrderDetails);
   //wishlist
   router.get("/wishlist/read", checkUserJWT, wishlistController.readWishlist);
   router.post(

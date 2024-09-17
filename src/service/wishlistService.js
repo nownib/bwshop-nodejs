@@ -30,13 +30,13 @@ const addProductToWishlist = async (userId, id) => {
 const fetchItemsInWishlist = async (userId) => {
   try {
     let wishlist = await db.Wishlist.findAll({ where: { userId: userId } });
-    let wishlistIds = wishlist.map((item) => item.id);
+    let wishlistId = wishlist.map((item) => item.id);
 
     let product = await db.Product.findAll({
       include: {
         model: db.Wishlist,
         attributes: [],
-        where: { id: { [Op.in]: wishlistIds } },
+        where: { id: { [Op.in]: wishlistId } },
       },
       raw: true, //js obj
     });

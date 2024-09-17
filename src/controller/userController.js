@@ -1,4 +1,5 @@
 import userApiService from "../service/userApiService";
+import { v2 as cloudinary } from "cloudinary";
 
 const handleRegisterUser = async (req, res) => {
   try {
@@ -76,7 +77,6 @@ const updateAccount = async (req, res) => {
   try {
     let userId = req.user.id;
     let data = await userApiService.updateUserAccount(req.body, userId);
-
     if (data && data.DT && data.DT.token) {
       //set cookie
       res.cookie("jwt", data.DT.token, {
@@ -98,10 +98,34 @@ const updateAccount = async (req, res) => {
   }
 };
 
+const uploadImage = async (req, res) => {
+  const options = {
+    use_filename: true,
+    unique_filename: false,
+    overwrite: true,
+  };
+  try {
+    const result = await cloudinary.uploader.upload(req.file.path, options);
+    return res.status(200).json({
+      EM: "Upload image to Cloudinary successfully",
+      EC: 0,
+      DT: result.secure_url,
+    });
+  } catch (error) {
+    console.error("Error", error);
+    return res.status(500).json({
+      EM: "Error from server",
+      EC: -1,
+      DT: "",
+    });
+  }
+};
+
 module.exports = {
   handleRegisterUser,
   handleLogin,
   getUserAccount,
   handleLogout,
   updateAccount,
+  uploadImage,
 };

@@ -1,0 +1,118 @@
+import db from "../models/index";
+
+const fetchAllProvinces = async () => {
+  try {
+    let data = await db.Province.findAll({
+      raw: true,
+      nest: true,
+    });
+    return {
+      EM: "Get province successfully",
+      EC: 0,
+      DT: data,
+    };
+  } catch (error) {
+    console.log(error);
+    return {
+      EM: "Some thing wrongs with services",
+      EC: 1,
+      DT: [],
+    };
+  }
+};
+const fetchDistrictsByProvince = async (provinceId) => {
+  try {
+    let data = await db.District.findAll({
+      where: { provinceId: provinceId },
+      raw: true,
+      nest: true,
+    });
+    return {
+      EM: "Get district successfully",
+      EC: 0,
+      DT: data,
+    };
+  } catch (error) {
+    console.log(error);
+    return {
+      EM: "Some thing wrongs with services",
+      EC: 1,
+      DT: [],
+    };
+  }
+};
+const fetchWardsByDistrict = async (districtId) => {
+  try {
+    let data = await db.Wards.findAll({
+      where: { districtId: districtId },
+      raw: true,
+      nest: true,
+    });
+    return {
+      EM: "Get wards successfully",
+      EC: 0,
+      DT: data,
+    };
+  } catch (error) {
+    console.log(error);
+    return {
+      EM: "Some thing wrongs with services",
+      EC: 1,
+      DT: [],
+    };
+  }
+};
+const createNewAddress = async (userId, rawDataAddress) => {
+  try {
+    await db.Address.create({
+      userId: userId,
+      province: rawDataAddress.province,
+      district: rawDataAddress.district,
+      wards: rawDataAddress.wards,
+      specificAddress: rawDataAddress.specificAddress,
+    });
+    return {
+      EM: "Add address successfully",
+      EC: 0,
+      DT: "",
+    };
+  } catch (error) {
+    console.log(error);
+    return {
+      EM: "Some thing wrongs with services",
+      EC: 1,
+      DT: [],
+    };
+  }
+};
+
+const fetchAddressByUser = async (userId) => {
+  try {
+    let data = await db.Address.findAll({
+      where: { userId: userId },
+      attributes: ["id", "province", "district", "wards", "specificAddress"],
+      raw: true,
+      nest: true,
+    });
+
+    return {
+      EM: "Get address successfully",
+      EC: 0,
+      DT: data,
+    };
+  } catch (error) {
+    console.log(error);
+    return {
+      EM: "Some thing wrongs with services",
+      EC: 1,
+      DT: [],
+    };
+  }
+};
+module.exports = {
+  fetchAllProvinces,
+  fetchDistrictsByProvince,
+  fetchWardsByDistrict,
+  createNewAddress,
+  fetchAddressByUser,
+};
