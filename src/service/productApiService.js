@@ -66,9 +66,27 @@ const getAllProducts = async () => {
     };
   }
 };
+const upSertReivew = async (dataReview, userId) => {
+  try {
+    console.log("check service", dataReview, userId);
+    return {
+      EM: `Thank you for your review!`,
+      EC: 0,
+      DT: "data",
+    };
+  } catch (error) {
+    console.log(error);
+    return {
+      EM: "Some thing wrongs with services",
+      EC: 1,
+      DT: [],
+    };
+  }
+};
 
 module.exports = {
   getAllProductsTrending,
   getAllCategories,
   getAllProducts,
+  upSertReivew,
 };

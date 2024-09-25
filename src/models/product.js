@@ -24,8 +24,7 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "productId",
       });
 
-      Product.belongsToMany(models.User, {
-        through: "Rating",
+      Product.hasMany(models.Rating, {
         foreignKey: "productId",
       });
     }
@@ -41,6 +40,7 @@ module.exports = (sequelize, DataTypes) => {
       categoryId: DataTypes.INTEGER,
       stock: DataTypes.INTEGER,
       status: DataTypes.STRING,
+      rating: DataTypes.DECIMAL(10, 2),
     },
     {
       sequelize,

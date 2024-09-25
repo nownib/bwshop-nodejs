@@ -11,6 +11,9 @@ module.exports = (sequelize, DataTypes) => {
       District.hasMany(models.Wards, {
         foreignKey: "districtId",
       });
+      District.hasMany(models.Address, {
+        foreignKey: "districtId",
+      });
     }
   }
 

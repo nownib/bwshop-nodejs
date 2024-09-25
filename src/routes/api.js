@@ -51,6 +51,12 @@ const initApiRoutes = (app) => {
   router.get("/product/trend", productController.readProductTrending);
   router.get("/category/read", productController.readCategory);
   router.get("/product/read", productController.readProduct);
+  //rating
+  router.post(
+    "/product/review",
+    checkUserJWT,
+    productController.handleUpSertReview
+  );
   //cart
   router.get("/cart/read", checkUserJWT, cartController.readCart);
   router.post(
@@ -71,11 +77,16 @@ const initApiRoutes = (app) => {
   router.post("/address/district", addressController.readDistricts);
   router.post("/address/wards", addressController.readWards);
   router.post("/address/create", checkUserJWT, addressController.createAddress);
-
-  router.post(
+  router.post("/address/update", checkUserJWT, addressController.updateAddress);
+  router.get(
     "/address/read-address",
     checkUserJWT,
     addressController.readAddress
+  );
+  router.delete(
+    "/address/delete/:id",
+    checkUserJWT,
+    addressController.deleteAddress
   );
   //order
   router.post("/order/create", checkUserJWT, cartController.handleCreateOrder);

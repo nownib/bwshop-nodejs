@@ -34,6 +34,13 @@ module.exports = {
       status: {
         type: Sequelize.STRING,
       },
+      rating: {
+        type: Sequelize.DECIMAL(10, 2),
+        validate: {
+          min: 1.0,
+          max: 5.0,
+        },
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,

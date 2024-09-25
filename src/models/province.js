@@ -8,6 +8,9 @@ module.exports = (sequelize, DataTypes) => {
       Province.hasMany(models.District, {
         foreignKey: "provinceId",
       });
+      Province.hasMany(models.Address, {
+        foreignKey: "provinceId",
+      });
     }
   }
 

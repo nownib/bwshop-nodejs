@@ -66,11 +66,15 @@ const createNewAddress = async (userId, rawDataAddress) => {
   try {
     await db.Address.create({
       userId: userId,
+      provinceId: rawDataAddress.provinceId,
+      districtId: rawDataAddress.districtId,
+      wardsId: rawDataAddress.wardsId,
       province: rawDataAddress.province,
       district: rawDataAddress.district,
       wards: rawDataAddress.wards,
       specificAddress: rawDataAddress.specificAddress,
     });
+
     return {
       EM: "Add address successfully",
       EC: 0,
@@ -90,7 +94,16 @@ const fetchAddressByUser = async (userId) => {
   try {
     let data = await db.Address.findAll({
       where: { userId: userId },
-      attributes: ["id", "province", "district", "wards", "specificAddress"],
+      attributes: [
+        "id",
+        "provinceId",
+        "districtId",
+        "wardsId",
+        "province",
+        "district",
+        "wards",
+        "specificAddress",
+      ],
       raw: true,
       nest: true,
     });
@@ -109,10 +122,71 @@ const fetchAddressByUser = async (userId) => {
     };
   }
 };
+const deleteAddressById = async (addressId) => {
+  try {
+    let address = await db.Address.findOne({
+      where: { id: addressId },
+      raw: false,
+    });
+    await address.destroy();
+    return {
+      EM: "Delete address successfully!",
+      EC: 0,
+      DT: [],
+    };
+  } catch (e) {
+    console.log(e);
+    return {
+      EM: "Error from service",
+      EC: 1,
+      DT: [],
+    };
+  }
+};
+const updateAddress = async (rawDataAddress) => {
+  try {
+    let address = await db.Address.findOne({
+      where: { id: rawDataAddress.addressId },
+      raw: false,
+    });
+
+    if (address) {
+      await address.update({
+        provinceId: rawDataAddress.provinceId,
+        districtId: rawDataAddress.districtId,
+        wardsId: rawDataAddress.wardsId,
+        province: rawDataAddress.province,
+        district: rawDataAddress.district,
+        wards: rawDataAddress.wards,
+        specificAddress: rawDataAddress.specificAddress,
+      });
+      return {
+        EM: "Update address successfully",
+        EC: 0,
+        DT: "",
+      };
+    } else {
+      return {
+        EM: "Address not found",
+        EC: 2,
+        DT: "",
+      };
+    }
+  } catch (error) {
+    console.log(error);
+    return {
+      EM: "Some thing wrongs with services",
+      EC: 1,
+      DT: [],
+    };
+  }
+};
 module.exports = {
   fetchAllProvinces,
   fetchDistrictsByProvince,
   fetchWardsByDistrict,
   createNewAddress,
   fetchAddressByUser,
+  deleteAddressById,
+  updateAddress,
 };

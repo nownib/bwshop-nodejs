@@ -11,16 +11,8 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
       User.hasOne(models.Cart, { foreignKey: "userId" });
       User.hasMany(models.Order, { foreignKey: "userId" });
-      // User.belongsToMany(models.Product, {
-      //   through: "Wishlist",
-      //   foreignKey: "userId",
-      // });
-      User.belongsToMany(models.Product, {
-        through: "Rating",
-        foreignKey: "userId",
-      });
-
       User.hasMany(models.Address, { foreignKey: "userId" });
+      User.hasMany(models.Rating, { foreignKey: "userId" });
     }
   }
   User.init(

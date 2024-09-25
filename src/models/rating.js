@@ -9,6 +9,8 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      Rating.belongsTo(models.User, { foreignKey: "userId" });
+      Rating.belongsTo(models.Product, { foreignKey: "productId" });
     }
   }
   Rating.init(

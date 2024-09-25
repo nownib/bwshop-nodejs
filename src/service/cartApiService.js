@@ -168,27 +168,50 @@ const clearCart = async (userId) => {
 
 const createOrder = async (dataOrder, userId) => {
   try {
-    const order = await db.Order.create({
-      userId: userId,
-      totalPrice: dataOrder.totalPrice,
-      address: dataOrder.address,
-      paymentMethod: dataOrder.paymentMethod,
-      paymentStatus: dataOrder.paymentStatus,
+    const items = dataOrder.products;
+    const totalAmount = await Promise.all(
+      items.map(async (item) => {
+        let product = await db.Product.findOne({
+          where: { id: item.id },
+        });
+        const price = product.price;
+        const quantity = item.quantity;
+
+        return (price * 100 * quantity) / 100;
+      })
+    ).then((values) => {
+      const total = values.reduce((acc, val) => acc + val, 0);
+      return total.toFixed(2);
     });
-    if (order) {
-      const items = dataOrder.products;
-      const orderItems = items.map((item) => ({
-        orderId: order.id,
-        productId: item.id,
-        quantity: item.quantity,
-      }));
-      await db.Order_Items.bulkCreate(orderItems);
+
+    if (totalAmount === dataOrder.totalPrice) {
+      const order = await db.Order.create({
+        userId: userId,
+        totalPrice: dataOrder.totalPrice,
+        address: dataOrder.address,
+        paymentMethod: dataOrder.paymentMethod,
+        paymentStatus: dataOrder.paymentStatus,
+      });
+      if (order) {
+        const orderItems = items.map((item) => ({
+          orderId: order.id,
+          productId: item.id,
+          quantity: item.quantity,
+        }));
+        await db.Order_Items.bulkCreate(orderItems);
+      }
+      return {
+        EM: "Your order created successfully!",
+        EC: 0,
+        DT: [],
+      };
+    } else {
+      return {
+        EM: "Some thing wrongs with services",
+        EC: 1,
+        DT: [],
+      };
     }
-    return {
-      EM: "Your order created successfully!",
-      EC: 0,
-      DT: [],
-    };
   } catch (error) {
     console.log(error);
     return {
@@ -204,6 +227,7 @@ const fetchOrderById = async (userId) => {
     let data = await db.Order.findAll({
       where: { userId: userId },
       attributes: ["id", "createdAt", "totalPrice", "address", "paymentMethod"],
+      order: [["id", "DESC"]],
     });
     return {
       EM: "Get items successfully",

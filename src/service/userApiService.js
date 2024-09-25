@@ -2,7 +2,6 @@ import db from "../models/index";
 import bcrypt from "bcryptjs";
 import { Op } from "sequelize";
 import { createJWT } from "../middleware/JWTAction";
-import { where } from "sequelize/lib/sequelize";
 const { v4: uuidv4 } = require("uuid");
 
 const salt = bcrypt.genSaltSync(10);

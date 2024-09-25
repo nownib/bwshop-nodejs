@@ -10,11 +10,17 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
       Address.belongsTo(models.User, { foreignKey: "userId" });
+      Address.belongsTo(models.Province, { foreignKey: "provinceId" });
+      Address.belongsTo(models.District, { foreignKey: "districtId" });
+      Address.belongsTo(models.Wards, { foreignKey: "wardsId" });
     }
   }
   Address.init(
     {
       userId: DataTypes.UUID,
+      provinceId: DataTypes.INTEGER,
+      districtId: DataTypes.INTEGER,
+      wardsId: DataTypes.INTEGER,
       province: DataTypes.STRING,
       district: DataTypes.STRING,
       wards: DataTypes.STRING,

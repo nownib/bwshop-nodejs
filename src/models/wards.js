@@ -8,6 +8,9 @@ module.exports = (sequelize, DataTypes) => {
       Wards.belongsTo(models.District, {
         foreignKey: "districtId",
       });
+      Wards.hasMany(models.Address, {
+        foreignKey: "wardsId",
+      });
     }
   }
 

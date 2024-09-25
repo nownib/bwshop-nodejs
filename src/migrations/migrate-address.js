@@ -1,7 +1,5 @@
 "use strict";
 
-const { types } = require("@babel/core");
-
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     await queryInterface.createTable("Addresses", {
@@ -15,6 +13,22 @@ module.exports = {
         type: Sequelize.UUID,
         allowNull: false,
       },
+      provinceId: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+      },
+      districtId: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+      },
+      wardsId: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+      },
+      specificAddress: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
       province: {
         type: Sequelize.STRING,
         allowNull: false,
@@ -24,10 +38,6 @@ module.exports = {
         allowNull: false,
       },
       wards: {
-        type: Sequelize.STRING,
-        allowNull: false,
-      },
-      specificAddress: {
         type: Sequelize.STRING,
         allowNull: false,
       },

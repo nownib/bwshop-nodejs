@@ -53,6 +53,7 @@ const createAddress = async (req, res) => {
   try {
     let userId = req.user.id;
     let rawDataAddress = req.body;
+
     let data = await addressApiService.createNewAddress(userId, rawDataAddress);
     return res.status(200).json({
       EM: data.EM,
@@ -84,10 +85,46 @@ const readAddress = async (req, res) => {
     });
   }
 };
+const deleteAddress = async (req, res) => {
+  try {
+    let addressId = req.params.id;
+    let data = await addressApiService.deleteAddressById(addressId);
+    return res.status(200).json({
+      EM: data.EM,
+      EC: data.EC,
+      DT: data.DT,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      EM: "Error from server",
+      EC: -1,
+      DT: "",
+    });
+  }
+};
+const updateAddress = async (req, res) => {
+  try {
+    let rawDataAddress = req.body;
+    let data = await addressApiService.updateAddress(rawDataAddress);
+    return res.status(200).json({
+      EM: data.EM,
+      EC: data.EC,
+      DT: data.DT,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      EM: "Error from server",
+      EC: -1,
+      DT: "",
+    });
+  }
+};
 module.exports = {
   readProvinces,
   readDistricts,
   readWards,
   createAddress,
   readAddress,
+  deleteAddress,
+  updateAddress,
 };
