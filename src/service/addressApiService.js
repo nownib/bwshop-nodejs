@@ -151,7 +151,7 @@ const updateAddress = async (rawDataAddress) => {
     });
 
     if (address) {
-      await address.update({
+      await address.address.update({
         provinceId: rawDataAddress.provinceId,
         districtId: rawDataAddress.districtId,
         wardsId: rawDataAddress.wardsId,

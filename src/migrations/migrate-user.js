@@ -9,24 +9,35 @@ module.exports = {
       },
       username: {
         type: Sequelize.STRING,
+        allowNull: false,
       },
       phone: {
         type: Sequelize.STRING,
       },
       email: {
         type: Sequelize.STRING,
+        allowNull: false,
       },
       password: {
         type: Sequelize.STRING,
       },
       type: {
         type: Sequelize.STRING,
+        allowNull: false,
       },
       role: {
         type: Sequelize.STRING,
+        allowNull: false,
       },
       avatar: {
         type: Sequelize.STRING,
+      },
+      code: {
+        type: Sequelize.STRING,
+      },
+      codeExpirationTime: {
+        allowNull: false,
+        type: Sequelize.DATE,
       },
       createdAt: {
         allowNull: false,

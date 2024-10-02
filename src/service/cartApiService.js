@@ -1,5 +1,5 @@
-import { where } from "sequelize/dist/index.js";
 import db from "../models/index";
+const { Op } = require("sequelize");
 
 const addProductToCart = async (userId, productId, quantity) => {
   try {
@@ -59,7 +59,7 @@ const fetchItemsInCart = async (userId) => {
     }
     cart = cart.get({ plain: true });
     let data = await db.Product.findAll({
-      attributes: ["id", "sku", "name", "price", "imageUrl", "stock"],
+      attributes: ["id", "sku", "name", "price", "imageUrl", "stock", "rating"],
       include: {
         model: db.Cart,
         attributes: ["orderId"],
@@ -168,32 +168,45 @@ const clearCart = async (userId) => {
 
 const createOrder = async (dataOrder, userId) => {
   try {
-    const items = dataOrder.products;
-    const totalAmount = await Promise.all(
-      items.map(async (item) => {
-        let product = await db.Product.findOne({
-          where: { id: item.id },
-        });
-        const price = product.price;
-        const quantity = item.quantity;
-
-        return (price * 100 * quantity) / 100;
-      })
-    ).then((values) => {
-      const total = values.reduce((acc, val) => acc + val, 0);
-      return total.toFixed(2);
+    const productIds = dataOrder.products.map((item) => item.id);
+    const products = await db.Product.findAll({
+      where: {
+        id: {
+          [Op.in]: productIds,
+        },
+      },
+      raw: true,
     });
+    let coupon;
+    if (dataOrder.coupon) {
+      coupon = await db.Coupon.findOne({
+        where: { code: dataOrder.coupon },
+      });
+    }
+    //Tính lại total Price
+    const totalAmount = dataOrder.products.reduce((total, item) => {
+      const product = products.find((prod) => prod.id === item.id);
+      const price = product.price;
+      const quantity = item.quantity;
 
-    if (totalAmount === dataOrder.totalPrice) {
+      return total + (price * 100 * quantity) / 100;
+    }, 0.0);
+
+    const totalOrder = coupon
+      ? totalAmount - (totalAmount * coupon.value) / 100
+      : totalAmount;
+
+    if (+totalOrder.toFixed(4) === +dataOrder.totalPrice.toFixed(4)) {
       const order = await db.Order.create({
         userId: userId,
-        totalPrice: dataOrder.totalPrice,
+        totalPrice: +totalOrder.toFixed(2),
         address: dataOrder.address,
         paymentMethod: dataOrder.paymentMethod,
         paymentStatus: dataOrder.paymentStatus,
+        coupon: coupon ? coupon.code : "",
       });
       if (order) {
-        const orderItems = items.map((item) => ({
+        const orderItems = dataOrder.products.map((item) => ({
           orderId: order.id,
           productId: item.id,
           quantity: item.quantity,
@@ -247,7 +260,7 @@ const fetchOrderDetails = async (orderId) => {
   try {
     const order = await db.Order.findOne({
       where: { id: orderId },
-      attributes: ["id", "totalPrice", "address", "paymentMethod"],
+      attributes: ["id", "totalPrice", "address", "paymentMethod", "coupon"],
       include: [
         {
           model: db.Order_Items,

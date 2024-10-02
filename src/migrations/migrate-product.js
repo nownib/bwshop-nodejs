@@ -15,24 +15,31 @@ module.exports = {
       },
       name: {
         type: Sequelize.STRING,
+        allowNull: false,
       },
       description: {
         type: Sequelize.TEXT("long"),
+        allowNull: false,
       },
       price: {
         type: Sequelize.DECIMAL(10, 2),
+        allowNull: false,
       },
       imageUrl: {
         type: Sequelize.STRING,
+        allowNull: false,
       },
       categoryId: {
         type: Sequelize.INTEGER,
+        allowNull: false,
       },
       stock: {
         type: Sequelize.INTEGER,
+        allowNull: false,
       },
       status: {
         type: Sequelize.STRING,
+        allowNull: false,
       },
       rating: {
         type: Sequelize.DECIMAL(10, 2),

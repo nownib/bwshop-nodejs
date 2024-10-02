@@ -5,9 +5,21 @@ const nonSecurePaths = [
   "/register",
   "/login",
   "/logout",
+  "/send-email",
+  "/reset-password",
   "/auth/google",
   "/google/redirect",
   "/product/read",
+  "/category/read",
+  "/product/trend",
+  "/product/read-details/:productId",
+  "/product/read-review/:productId",
+  "/product/read-rating-by-star/:productId",
+  "/address/province",
+  "/address/district",
+  "/address/wards",
+  "/blog/read",
+  "/contact/add",
 ];
 
 const createJWT = (payload) => {
@@ -29,7 +41,7 @@ const verifyToken = (token) => {
   try {
     decoded = jwt.verify(token, key);
   } catch (error) {
-    console.log(error);
+    console.log("Error from verify token");
   }
   return decoded;
 };
@@ -51,7 +63,6 @@ const checkUserJWT = (req, res, next) => {
 
   if ((cookies && cookies.jwt) || tokenFromHeader) {
     let token = cookies && cookies.jwt ? cookies.jwt : tokenFromHeader;
-
     let decoded = verifyToken(token);
     if (decoded) {
       req.user = decoded;

@@ -70,9 +70,69 @@ const handleUpSertReview = async (req, res) => {
     });
   }
 };
+
+const readReview = async (req, res) => {
+  try {
+    let productId = req.params.productId;
+    let data = await productApiService.getReviewsByProduct(productId);
+    return res.status(200).json({
+      EM: data.EM,
+      EC: data.EC,
+      DT: data.DT,
+    });
+  } catch (error) {
+    console.log(e);
+    return res.status(500).json({
+      EM: "Error from server",
+      EC: "-1",
+      DT: "",
+    });
+  }
+};
+
+const readProductDetails = async (req, res) => {
+  try {
+    let productId = req.params.productId;
+    let data = await productApiService.getProductDetails(productId);
+    return res.status(200).json({
+      EM: data.EM,
+      EC: data.EC,
+      DT: data.DT,
+    });
+  } catch (error) {
+    console.log(e);
+    return res.status(500).json({
+      EM: "Error from server",
+      EC: "-1",
+      DT: "",
+    });
+  }
+};
+
+const readRatingsByStar = async (req, res) => {
+  try {
+    let productId = req.params.productId;
+    let data = await productApiService.getRatingsByStar(productId);
+    return res.status(200).json({
+      EM: data.EM,
+      EC: data.EC,
+      DT: data.DT,
+    });
+  } catch (error) {
+    console.log(e);
+    return res.status(500).json({
+      EM: "Error from server",
+      EC: "-1",
+      DT: "",
+    });
+  }
+};
 module.exports = {
   readProductTrending,
   readCategory,
   readProduct,
   handleUpSertReview,
+  readReview,
+  readProductDetails,
+  readRatingsByStar,
 };

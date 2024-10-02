@@ -30,6 +30,8 @@ module.exports = (sequelize, DataTypes) => {
         defaultValue: "CUSTOMER",
       },
       avatar: DataTypes.STRING,
+      code: DataTypes.STRING,
+      codeExpirationTime: DataTypes.DATE,
     },
     {
       sequelize,

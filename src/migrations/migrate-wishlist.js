@@ -11,20 +11,17 @@ module.exports = {
       userId: {
         type: Sequelize.UUID,
         references: {
-          model: "Users", // Tên của bảng Users
+          model: "Users",
           key: "id",
         },
-        onUpdate: "CASCADE",
-        onDelete: "CASCADE",
       },
       productId: {
         type: Sequelize.INTEGER,
         references: {
-          model: "Products", // Tên của bảng Products
+          model: "Products",
           key: "id",
         },
-        onUpdate: "CASCADE",
-        onDelete: "CASCADE",
+        allowNull: false,
       },
       createdAt: {
         allowNull: false,

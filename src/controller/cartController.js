@@ -5,9 +5,6 @@ const handleAddProduct = async (req, res) => {
     let productId = req.body.productId;
     let quantity = req.body.quantity;
     let userId = req.user.id;
-    // console.log(productId);
-    // console.log("check", userId);
-    // console.log(quantity);
     let data = await cartApiService.addProductToCart(
       userId,
       productId,

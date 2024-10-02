@@ -10,22 +10,26 @@ module.exports = {
       },
       userId: {
         type: Sequelize.UUID,
+        allowNull: false,
       },
       productId: {
         type: Sequelize.INTEGER,
+        allowNull: false,
       },
       rating: {
-        type: Sequelize.DECIMAL(10, 2),
+        type: Sequelize.INTEGER,
         validate: {
-          min: 1.0,
-          max: 5.0,
+          min: 1,
+          max: 5,
         },
+        allowNull: false,
       },
       review: {
         type: Sequelize.STRING,
       },
       productId: {
         type: Sequelize.INTEGER,
+        allowNull: false,
       },
       createdAt: {
         allowNull: false,

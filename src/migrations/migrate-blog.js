@@ -10,18 +10,23 @@ module.exports = {
       },
       title: {
         type: Sequelize.STRING,
+        allowNull: false,
       },
       description: {
         type: Sequelize.TEXT("long"),
+        allowNull: false,
       },
       imageUrl: {
         type: Sequelize.STRING,
+        allowNull: false,
       },
       author: {
         type: Sequelize.STRING,
+        allowNull: false,
       },
       category: {
         type: Sequelize.STRING,
+        allowNull: false,
       },
       createdAt: {
         allowNull: false,
