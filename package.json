@@ -2,11 +2,15 @@
   "name": "backend-bwshop",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon --exec babel-node src/server.js"
+    "build": "babel src --out-dir dist",
+    "start": "node dist/server.js"
   },
+  "keywords": [
+    "nodejs",
+    "jwt"
+  ],
   "author": "Bin",
   "license": "ISC",
   "dependencies": {
