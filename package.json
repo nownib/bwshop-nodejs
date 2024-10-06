@@ -4,7 +4,7 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "build": "babel src --out-dir dist",
+    "build": "npx babel src --out-dir dist",
     "start": "node dist/server.js"
   },
   "author": "Bin",
@@ -30,9 +30,7 @@
     "passport-local": "^1.0.0",
     "pg": "8.7.1",
     "pg-hstore": "2.3.4",
-    "sequelize": "6.13.0"
-  },
-  "devDependencies": {
+    "sequelize": "6.13.0",
     "@babel/cli": "^7.24.8",
     "@babel/core": "^7.15.4",
     "@babel/node": "7.15.4",
