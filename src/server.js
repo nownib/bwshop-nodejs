@@ -5,7 +5,7 @@ import session from "express-session";
 import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
 import connectDB from "./config/connectDB";
-import loginWithGoogle from "./controller/social/googleController";
+import loginWithGoogle from "./controller/social/GoogleController";
 import initWebRoutes from "./routes/web";
 import initApiRoutes from "./routes/api";
 import viewEngine from "./config/viewEngine";
