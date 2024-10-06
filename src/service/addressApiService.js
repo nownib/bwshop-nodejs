@@ -64,16 +64,30 @@ const fetchWardsByDistrict = async (districtId) => {
 };
 const createNewAddress = async (userId, rawDataAddress) => {
   try {
-    await db.Address.create({
-      userId: userId,
-      provinceId: rawDataAddress.provinceId,
-      districtId: rawDataAddress.districtId,
-      wardsId: rawDataAddress.wardsId,
-      province: rawDataAddress.province,
-      district: rawDataAddress.district,
-      wards: rawDataAddress.wards,
-      specificAddress: rawDataAddress.specificAddress,
-    });
+    if (
+      rawDataAddress &&
+      rawDataAddress.provinceId &&
+      rawDataAddress.district &&
+      rawDataAddress.wards &&
+      rawDataAddress.specificAddress
+    ) {
+      await db.Address.create({
+        userId: userId,
+        provinceId: rawDataAddress.provinceId,
+        districtId: rawDataAddress.districtId,
+        wardsId: rawDataAddress.wardsId,
+        province: rawDataAddress.province,
+        district: rawDataAddress.district,
+        wards: rawDataAddress.wards,
+        specificAddress: rawDataAddress.specificAddress,
+      });
+    } else {
+      return {
+        EM: "Please enter address",
+        EC: 1,
+        DT: "",
+      };
+    }
 
     return {
       EM: "Add address successfully",
@@ -151,15 +165,29 @@ const updateAddress = async (rawDataAddress) => {
     });
 
     if (address) {
-      await address.address.update({
-        provinceId: rawDataAddress.provinceId,
-        districtId: rawDataAddress.districtId,
-        wardsId: rawDataAddress.wardsId,
-        province: rawDataAddress.province,
-        district: rawDataAddress.district,
-        wards: rawDataAddress.wards,
-        specificAddress: rawDataAddress.specificAddress,
-      });
+      if (
+        rawDataAddress.provinceId &&
+        rawDataAddress.district &&
+        rawDataAddress.wards &&
+        rawDataAddress.specificAddress
+      ) {
+        await address.update({
+          provinceId: rawDataAddress.provinceId,
+          districtId: rawDataAddress.districtId,
+          wardsId: rawDataAddress.wardsId,
+          province: rawDataAddress.province,
+          district: rawDataAddress.district,
+          wards: rawDataAddress.wards,
+          specificAddress: rawDataAddress.specificAddress,
+        });
+      } else {
+        return {
+          EM: "Please enter",
+          EC: 1,
+          DT: "",
+        };
+      }
+
       return {
         EM: "Update address successfully",
         EC: 0,

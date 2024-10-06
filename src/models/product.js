@@ -41,10 +41,13 @@ module.exports = (sequelize, DataTypes) => {
       stock: DataTypes.INTEGER,
       status: DataTypes.STRING,
       rating: DataTypes.DECIMAL(10, 2),
+      productionDate: DataTypes.DATE,
+      expirationDate: DataTypes.DATE,
     },
     {
       sequelize,
       modelName: "Product",
+      timestamps: false,
     }
   );
 

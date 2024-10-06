@@ -31,11 +31,7 @@ module.exports = {
       coupon: {
         type: Sequelize.STRING,
       },
-      createdAt: {
-        allowNull: false,
-        type: Sequelize.DATE,
-      },
-      updatedAt: {
+      createTime: {
         allowNull: false,
         type: Sequelize.DATE,
       },

@@ -32,10 +32,15 @@ module.exports = (sequelize, DataTypes) => {
       avatar: DataTypes.STRING,
       code: DataTypes.STRING,
       codeExpirationTime: DataTypes.DATE,
+      createTime: {
+        type: DataTypes.DATE,
+        defaultValue: new Date(),
+      },
     },
     {
       sequelize,
       modelName: "User",
+      timestamps: false,
     }
   );
   return User;

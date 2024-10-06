@@ -53,11 +53,10 @@ const addProductToCart = async (userId, productId, quantity) => {
 
 const fetchItemsInCart = async (userId) => {
   try {
-    let cart = await db.Cart.findOne({ where: { userId: userId } });
+    let cart = await db.Cart.findOne({ where: { userId: userId }, raw: false });
     if (!cart) {
       cart = await db.Cart.create({ userId: userId });
     }
-    cart = cart.get({ plain: true });
     let data = await db.Product.findAll({
       attributes: ["id", "sku", "name", "price", "imageUrl", "stock", "rating"],
       include: {
@@ -168,6 +167,13 @@ const clearCart = async (userId) => {
 
 const createOrder = async (dataOrder, userId) => {
   try {
+    if (!dataOrder.address) {
+      return {
+        EM: "Please enter address",
+        EC: 1,
+        DT: [],
+      };
+    }
     const productIds = dataOrder.products.map((item) => item.id);
     const products = await db.Product.findAll({
       where: {
@@ -175,7 +181,7 @@ const createOrder = async (dataOrder, userId) => {
           [Op.in]: productIds,
         },
       },
-      raw: true,
+      raw: false,
     });
     let coupon;
     if (dataOrder.coupon) {
@@ -183,19 +189,31 @@ const createOrder = async (dataOrder, userId) => {
         where: { code: dataOrder.coupon },
       });
     }
-    //Tính lại total Price
+    let isCheckStock = true;
     const totalAmount = dataOrder.products.reduce((total, item) => {
       const product = products.find((prod) => prod.id === item.id);
       const price = product.price;
       const quantity = item.quantity;
-
+      if (product.stock >= quantity) {
+        product.update({
+          stock: product.stock - quantity,
+        });
+      } else {
+        isCheckStock = false;
+      }
       return total + (price * 100 * quantity) / 100;
     }, 0.0);
 
+    if (isCheckStock === false) {
+      return {
+        EM: "The quantity exceeds the available stock!",
+        EC: 1,
+        DT: [],
+      };
+    }
     const totalOrder = coupon
       ? totalAmount - (totalAmount * coupon.value) / 100
       : totalAmount;
-
     if (+totalOrder.toFixed(4) === +dataOrder.totalPrice.toFixed(4)) {
       const order = await db.Order.create({
         userId: userId,
@@ -239,7 +257,13 @@ const fetchOrderById = async (userId) => {
   try {
     let data = await db.Order.findAll({
       where: { userId: userId },
-      attributes: ["id", "createdAt", "totalPrice", "address", "paymentMethod"],
+      attributes: [
+        "id",
+        "createTime",
+        "totalPrice",
+        "address",
+        "paymentMethod",
+      ],
       order: [["id", "DESC"]],
     });
     return {
@@ -261,6 +285,7 @@ const fetchOrderDetails = async (orderId) => {
     const order = await db.Order.findOne({
       where: { id: orderId },
       attributes: ["id", "totalPrice", "address", "paymentMethod", "coupon"],
+      raw: false,
       include: [
         {
           model: db.Order_Items,
@@ -285,7 +310,7 @@ const fetchOrderDetails = async (orderId) => {
   } catch (error) {
     console.log(error);
     return {
-      EM: "Some thing wrongs with services",
+      EM: "Some thing wrongs with order services ",
       EC: 1,
       DT: [],
     };

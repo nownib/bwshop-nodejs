@@ -27,10 +27,15 @@ module.exports = (sequelize, DataTypes) => {
       paymentMethod: DataTypes.STRING,
       paymentStatus: DataTypes.STRING,
       coupon: DataTypes.STRING,
+      createTime: {
+        type: DataTypes.DATE,
+        defaultValue: new Date(),
+      },
     },
     {
       sequelize,
       modelName: "Order",
+      timestamps: false,
     }
   );
 

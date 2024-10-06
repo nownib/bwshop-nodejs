@@ -47,7 +47,7 @@ const getAllProducts = async () => {
   try {
     let data = await db.Product.findAll({
       include: { model: db.Category, attributes: ["name"] },
-      order: [["id", "DESC"]],
+      order: [["id", "ASC"]],
       raw: true,
       nest: true,
     });
@@ -96,20 +96,6 @@ const upSertReivew = async (dataReview, userId) => {
     avgRating = avgRating.avgRating
       ? parseFloat(avgRating.avgRating).toFixed(2)
       : "0.00";
-
-    // let ratingByProduct = await db.Rating.findAll({
-    //   where: { productId: dataReview.productId },
-    // });
-    // const avgRating = await Promise.all(
-    //   ratingByProduct.map(async (item) => {
-    //     const rating = +item.rating;
-    //     return rating;
-    //   })
-    // ).then((values) => {
-    //   const total = values.reduce((acc, val) => acc + val, 0);
-    //   const avg = total / ratingByProduct.length;
-    //   return avg.toFixed(2);
-    // });
 
     let product = await db.Product.findOne({
       where: { id: dataReview.productId },
@@ -161,12 +147,28 @@ const getReviewsByProduct = async (productId) => {
 
 const getProductDetails = async (productId) => {
   try {
+    if (isNaN(productId)) {
+      return {
+        EM: "Invalid product ID",
+        EC: 404,
+        DT: [],
+      };
+    }
     let data = await db.Product.findOne({
       where: { id: productId },
       include: { model: db.Category, attributes: ["name"] },
       raw: true,
       nest: true,
     });
+
+    if (!data) {
+      return {
+        EM: "Not Found",
+        EC: 404,
+        DT: [],
+      };
+    }
+
     return {
       EM: `Get product succeeds`,
       EC: 0,
@@ -194,8 +196,7 @@ const getRatingsByStar = async (productId) => {
       raw: true,
       nest: true,
     });
-    let totalCountRatings = ratings.reduce((sum, item) => sum + item.count, 0);
-
+    let totalCountRatings = ratings.reduce((sum, item) => sum + +item.count, 0);
     let allRatings = [5, 4, 3, 2, 1];
     let data = allRatings.map((star) => {
       let found = ratings.find((item) => item.rating === star);

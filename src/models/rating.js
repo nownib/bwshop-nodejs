@@ -19,10 +19,15 @@ module.exports = (sequelize, DataTypes) => {
       userId: DataTypes.UUID,
       rating: DataTypes.INTEGER,
       review: DataTypes.STRING,
+      createTime: {
+        type: DataTypes.DATE,
+        defaultValue: new Date(),
+      },
     },
     {
       sequelize,
       modelName: "Rating",
+      timestamps: false,
     }
   );
   return Rating;

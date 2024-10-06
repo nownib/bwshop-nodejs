@@ -107,6 +107,7 @@ const registerUser = async (userData) => {
       EC: 0,
     };
   } catch (error) {
+    console.log(error);
     return {
       EM: "Error from server",
       EC: -1,

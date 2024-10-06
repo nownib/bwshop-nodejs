@@ -48,12 +48,10 @@ module.exports = {
           max: 5.0,
         },
       },
-      createdAt: {
-        allowNull: false,
+      productionDate: {
         type: Sequelize.DATE,
       },
-      updatedAt: {
-        allowNull: false,
+      expirationDate: {
         type: Sequelize.DATE,
       },
     });
